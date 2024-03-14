@@ -1,0 +1,107 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parcours: Export Cevenne</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.5.1/gpx.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS for responsive grid system -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+        .navbar-custom {
+            background-color: #333;
+            padding: 10px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .navbar-custom a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .navbar-custom a:hover {
+            background-color: #555;
+            color: #ddd;
+        }
+        #map {
+            height: 400px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-custom">
+        <a href="#">Accueil</a>
+        <a href="#">À propos</a>
+        <a href="#">Galerie</a>
+        <a href="#">Contact</a>
+    </div>
+    <div id="map"></div>
+    <footer class="footer">
+        <p>© 2024 Parcours Tracker</p>
+    </footer>
+    <script>// Initialisation de la carte OpenStreetMap avec Leaflet
+        var map = L.map('map').setView([44.0, 3.5], 8); // Ajustez les coordonnées selon votre fichier GPX
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        function apparitionParcours(parcours) {
+    // Charge le parcours GPX et ajuste la vue de la carte pour l'afficher entièrement
+     new L.GPX(parcours, { async: true }).on('loaded', function (e) {
+        var gpxLayer = e.target;
+        map.fitBounds(gpxLayer.getBounds());
+
+        // Ajouter un gestionnaire d'événements de clic au parcours GPX
+        gpxLayer.on('click', function(event) {
+                    var imageUrl = "https://live.staticflickr.com/65535/53587668693_47aafa61a8_k.jpg"; // L'URL de votre image
+                    var imageTag = '<img src="' + imageUrl + '" width="200" alt="Image du parcours">'; // La balise img HTML pour afficher l'image
+
+                    var popupContent = "Informations sur le parcours GPX<br>" + imageTag; // Ajouter l'image au contenu du popup
+                    var popupOptions = {
+                        maxWidth: 400
+                    };
+
+            // Créer et afficher le popup au point cliqué
+            var popup = L.popup(popupOptions)
+            .setLatLng(event.latlng) 
+            .setContent(popupContent)
+            .openOn(map);
+        });
+        }).addTo(map);
+        }
+        apparitionParcours( 'parcours_aigoual_kaslesjambes.gpx')
+        apparitionParcours( 'parcours_2275840.gpx')
+        apparitionParcours( 'traversee_cevennes.gpx')
+
+
+
+        // Exemple de coordonnées pour un marqueur
+        var lat = 44.0;  // Remplacez par la latitude de votre point
+        var lon = 3.5;   // Remplacez par la longitude de votre point
+
+// Créer un marqueur et l'ajouter à la carte
+        var marker = L.marker([lat, lon]).addTo(map);
+
+// Vous pouvez également ajouter un popup au marqueur
+        marker.bindPopup("Mon point d'intérêt");
+        
+        </script>
+</body>
+</html>
